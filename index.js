@@ -12,6 +12,7 @@ bot.command('clear', async (ctx) => {
         for (item of messagesID) {
             ctx.telegram.deleteMessage(item.chatId, item.messageId)
         }
+        console.log('clear')
     } catch {
         ctx.reply('Error: удаляй руками')
     }
