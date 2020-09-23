@@ -17,7 +17,9 @@ let messagesID = [];
 bot.command('clear', async (ctx) => {
     try {
         for (item of messagesID) {
-            ctx.telegram.deleteMessage(item.chatId, item.messageId)
+            if (ctx.message.chat.id === item.chatId) {
+                ctx.telegram.deleteMessage(item.chatId, item.messageId)
+            }
         }
         ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
     } catch {
