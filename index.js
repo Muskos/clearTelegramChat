@@ -22,6 +22,8 @@ if (!fs.existsSync(CHAT_FOLDER)){
 bot.command('clear', clearCallback)
 bot.command('timeout', setTimer)
 
+bot.help((ctx) => ctx.reply('/clear - отчистить все сообщения\n/timeout N - удалить сообщения через N минут'))
+
 bot.on('message', saveMessageId)
 
 bot.launch()
