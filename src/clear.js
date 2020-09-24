@@ -4,7 +4,7 @@ const CHAT_FOLDER = 'data'
 const ENCODE = 'utf8'
 const FILE_FORMAT = 'txt'
 
-const clearCallback = async (ctx) => {
+const clear = async (ctx) => {
     const chatId = ctx.message.chat.id
 
     try {
@@ -16,12 +16,16 @@ const clearCallback = async (ctx) => {
                 ctx.telegram.deleteMessage(chatId, item)
             }
         }
-
-        ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
-        fs.writeFile(`${CHAT_FOLDER}/${ctx.message.chat.id}.${FILE_FORMAT}`, '')
+        fs.writeFile(`${CHAT_FOLDER}/${chatId}.${FILE_FORMAT}`, '')
     } catch (error) {
         console.log(error)
     }
+}
+
+const clearCallback = async (ctx) => {
+    clear(ctx)
+
+    ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
 }
 
 const saveMessageId = async (ctx) => {
@@ -34,5 +38,6 @@ const saveMessageId = async (ctx) => {
 
 module.exports = Object.assign({}, {
     clearCallback,
-    saveMessageId
+    saveMessageId,
+    clear
 })
