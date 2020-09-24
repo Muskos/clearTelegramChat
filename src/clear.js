@@ -39,5 +39,6 @@ const saveMessageId = async (ctx) => {
 module.exports = Object.assign({}, {
     clearCallback,
     saveMessageId,
-    clear
+    clear,
+    CHAT_FOLDER
 })
