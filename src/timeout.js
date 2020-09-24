@@ -4,12 +4,14 @@ const COMMAND_NAME = '/timeout'
 let intervalId
 
 const intervalFunc = (ctx) => {
-    saveMessageId(ctx)
     clear(ctx)
 }
 
 const setTimer = async (ctx) => {
     const timer = Number(ctx.message.text.substring(9));
+
+    saveMessageId(ctx)
+
     if (isNaN(timer)) {
         return
     }
