@@ -1,25 +1,24 @@
-const { clear, saveMessageId } = require('./clear');
-
-const TIME_OUT = 1000;
-let intervalId;
-
-const intervalFunc = (ctx, timer) => {
-  clear(ctx, timer);
-};
+const { saveMessageId } = require('./clear');
+const { database } = require('../services/database');
 
 const setTimer = async ctx => {
+  saveMessageId(ctx);
+  const chatId = ctx.message.chat.id;
+  const settings = await database.getSettingsByChatId(chatId, 'timeout');
   const timer = Number(ctx.message.text.substring(9));
 
-  saveMessageId(ctx);
-
-  if (isNaN(timer)) {
-    return;
-  }
-  if (timer === 0) {
-    clearInterval(intervalId);
+  if (!settings[0]) {
+    database.saveSettings({
+      chatId,
+      setting: 'timeout',
+      value: timer
+    });
   } else {
-    clearInterval(intervalId);
-    intervalId = setInterval(() => intervalFunc(ctx, timer), TIME_OUT);
+    database.updateSettings({
+      chatId,
+      setting: 'timeout',
+      value: timer
+    });
   }
 };
 

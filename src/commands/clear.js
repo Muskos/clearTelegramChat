@@ -1,7 +1,5 @@
 const { database } = require('../services/database');
 
-const CHAT_FOLDER = 'data';
-
 const clear = async (ctx, timeout) => {
   const chatId = ctx.message.chat.id;
 
@@ -16,13 +14,28 @@ const clear = async (ctx, timeout) => {
     for (const item of messages) {
       if (item) {
         ctx.telegram.deleteMessage(chatId, item.messageId);
+        database.deleteMessage(chatId, item.messageId);
       }
     }
-
-    database.deleteMessagesByChatId(chatId);
   } catch (error) {
     console.log(error);
   }
+};
+
+const clearByTimeout = async bot => {
+  const settings = await database.getSettings('timeout');
+  settings.forEach(async item => {
+    const messages = await database.getMessagesByTimeOut(
+      item.chatId,
+      item.value
+    );
+    for (const message of messages) {
+      if (message) {
+        bot.telegram.deleteMessage(message.chatId, message.messageId);
+        database.deleteMessage(message.chatId, message.messageId);
+      }
+    }
+  });
 };
 
 const clearCallback = async ctx => {
@@ -45,6 +58,6 @@ module.exports = Object.assign(
     clearCallback,
     saveMessageId,
     clear,
-    CHAT_FOLDER
+    clearByTimeout
   }
 );
