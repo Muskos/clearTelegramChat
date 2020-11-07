@@ -17,7 +17,6 @@ class MessagesBase {
   }
 
   saveMessage(message) {
-    console.log(message);
     const date = new Date();
     this.db.run(
       `INSERT INTO messages(chatId, messageId, createdAt)
@@ -53,7 +52,7 @@ class MessagesBase {
         const currentDate = new Date();
         const timestampToDelete = currentDate.getTime() - timeout * 1000 * 60;
 
-        return item.createdAt < timestampToDelete;
+        return item.createdAt < timestampToDelete && timeout > 0;
       })
       .map(item => new Message(item));
   }
