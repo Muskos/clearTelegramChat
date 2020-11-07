@@ -29,7 +29,6 @@ class Database {
   }
 
   saveMessage(message) {
-    console.log(message);
     const date = new Date();
     this.db.run(
       `INSERT INTO messages(chatId, messageId, createdAt)

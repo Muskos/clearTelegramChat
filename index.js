@@ -12,5 +12,4 @@ bot.run();
 
 process.on('SIGINT', async () => {
   await bot.stop();
-  throw new Error('Exit');
 });

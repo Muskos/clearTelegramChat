@@ -30,11 +30,12 @@ class Bot {
 
   async stop() {
     const chatsId = await database.getAllChatsId();
-    chatsId.forEach(chatId => {
-      this.bot.telegram.sendMessage(
+    chatsId.forEach(async chatId => {
+      const botMessage = await this.bot.telegram.sendMessage(
         chatId,
         'Бот временно остановлен. Все сообщения добавленные после остановки не будут удалены'
       );
+      saveMessageId({ message: botMessage });
     });
   }
 }
