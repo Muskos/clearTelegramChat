@@ -7,6 +7,7 @@ const setTimer = async ctx => {
   const settings = await database.getSettingsByChatId(chatId, 'timeout');
   const timer = Number(ctx.message.text.substring(9));
 
+  // TODO combine save and update to one function
   if (!settings[0]) {
     database.saveSettings({
       chatId,

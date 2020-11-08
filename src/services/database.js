@@ -9,7 +9,6 @@ class Database {
       if (err) {
         console.error(err.message);
       }
-      console.log('Connected to the users.db database.');
     });
 
     this.db.run = util.promisify(this.db.run);
@@ -31,10 +30,6 @@ class Database {
     this.getSettings = this.settingsBase.getSettings;
     this.getSettingsByChatId = this.settingsBase.getSettingsByChatId;
     this.updateSettings = this.settingsBase.updateSettings;
-  }
-
-  run() {
-    console.log('start');
   }
 }
 

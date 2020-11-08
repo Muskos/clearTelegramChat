@@ -3,9 +3,6 @@ require('dotenv').config({
 });
 
 const { Bot } = require('./src/services/bot');
-const { database } = require('./src/services/database');
-
-database.run();
 
 const bot = new Bot();
 bot.run();
