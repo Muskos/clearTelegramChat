@@ -24,6 +24,7 @@ class Database {
     this.getAllChatsId = this.messagesBase.getAllChatsId;
     this.deleteMessagesByChatId = this.messagesBase.deleteMessagesByChatId;
     this.deleteMessage = this.messagesBase.deleteMessage;
+    this.getMessagesWithTimeOut = this.messagesBase.getMessagesWithTimeOut;
 
     this.settingsBase = new SettingsBase(this.db);
     this.saveSettings = this.settingsBase.saveSettings;

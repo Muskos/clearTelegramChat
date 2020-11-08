@@ -1,58 +1,32 @@
+const { QUERY } = require('../constants/query');
 class SettingsBase {
   constructor(db) {
     this.db = db;
-    this.db.serialize(() => {
-      this.db.run(
-        'CREATE TABLE IF NOT EXISTS settings(chatId text, setting text, value text)',
-        err => {
-          if (err) {
-            console.log(err);
-            throw err;
-          }
-        }
-      );
-    });
+    this.db.run(QUERY.CREATE_SETTINGS_DB);
   }
 
   saveSettings(settings) {
-    this.db.run(
-      `INSERT INTO settings(chatId, setting, value)
-              VALUES(
-                  '${settings.chatId}',
-                  '${settings.setting}',
-                  '${settings.value}')
-        `,
-      err => {
-        if (err) {
-          console.log(err);
-          throw err;
-        }
-      }
-    );
+    this.db.run(QUERY.INSERT_SETTINGS, [
+      settings.chatId,
+      settings.setting,
+      settings.value
+    ]);
   }
 
   async getSettings(setting) {
-    return await this.db.all(
-      `SELECT chatId, setting, value FROM settings WHERE setting = '${setting}'`
-    );
+    return await this.db.all(QUERY.GET_SETTINGS, [setting]);
   }
 
   async getSettingsByChatId(chatId, setting) {
-    return await this.db.all(
-      `SELECT chatId, setting, value FROM settings WHERE chatId = '${chatId}' AND setting = '${setting}'`
-    );
+    return await this.db.all(QUERY.SELECT_CHAT_SETTINGS, [chatId, setting]);
   }
 
   updateSettings(settings) {
-    this.db.run(
-      `UPDATE settings SET value = ${settings.value} WHERE chatId = '${settings.chatId}' AND setting = '${settings.setting}'`,
-      err => {
-        if (err) {
-          console.log(err);
-          throw err;
-        }
-      }
-    );
+    this.db.run(QUERY.UPDATE_SETTINGS, [
+      settings.value,
+      settings.chatId,
+      settings.setting
+    ]);
   }
 }
 

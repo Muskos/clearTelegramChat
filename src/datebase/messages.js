@@ -1,64 +1,50 @@
-const { Message } = require('../models/message');
+const { QUERY } = require('../constants/query');
 
 class MessagesBase {
   constructor(db) {
     this.db = db;
-    this.db.serialize(() => {
-      this.db.run(
-        'CREATE TABLE IF NOT EXISTS messages(chatId text, messageId text, createdAt datetime)',
-        err => {
-          if (err) {
-            console.log(err);
-            throw err;
-          }
-        }
-      );
-    });
+    this.db.run(QUERY.CREATE_MESSAGES_BD);
   }
 
   saveMessage(message) {
-    const date = new Date();
-    this.db.run(
-      `INSERT INTO messages(chatId, messageId, createdAt)
-            VALUES(
-                ${message.chat.id},
-                ${message.message_id},
-                ${date.getTime()})
-      `,
-      err => {
-        if (err) {
-          console.log(err);
-          throw err;
-        }
-      }
-    );
+    this.db.run(QUERY.INSERT_MESSAGE, [
+      message.chatId,
+      message.messageId,
+      message.createdAt,
+      message.deleteAt
+    ]);
   }
 
   async getMessagesByChatId(chatId) {
-    const messages = await this.db.all(
-      `SELECT messageId FROM messages WHERE chatId = ${chatId}`
-    );
+    const messages = await this.db.all(QUERY.SELECT_BY_CHAT_ID, [chatId]);
 
-    return messages.map(item => new Message(item));
+    return messages;
   }
 
   async getMessagesByTimeOut(chatId, timeout) {
-    const messages = await this.db.all(
-      `SELECT chatId, messageId, createdAt FROM messages WHERE chatId = ${chatId}`
-    );
+    const messages = await this.db.all(QUERY.SELECT_BY_TIMEOUT, [chatId]);
 
-    return messages
-      .filter(item => {
-        const currentDate = new Date();
-        const timestampToDelete = currentDate.getTime() - timeout * 1000 * 60;
+    return messages.filter(item => {
+      const currentDate = new Date();
+      const timestampToDelete = currentDate.getTime() - timeout * 1000 * 60;
 
-        return item.createdAt < timestampToDelete && timeout > 0;
-      })
-      .map(item => new Message(item));
+      return item.createdAt < timestampToDelete && timeout > 0;
+    });
+  }
+
+  async getMessagesWithTimeOut() {
+    const messages = await this.db.all(QUERY.SELECT_WITH_TIMEOUT);
+
+    return messages.filter(item => {
+      const currentDate = new Date();
+      const timestampToDelete = currentDate.getTime();
+
+      return Number(item.deleteAt) < timestampToDelete;
+    });
   }
 
   async getAllChatsId() {
-    const chatsId = await this.db.all('SELECT chatId from messages');
+    const chatsId = await this.db.all(QUERY.GET_CHAT_ID);
     function onlyUnique(value, index, self) {
       return self.indexOf(value) === index;
     }
@@ -67,25 +53,11 @@ class MessagesBase {
   }
 
   deleteMessagesByChatId(chatId) {
-    const deleteSQL = 'DELETE from messages WHERE chatId = ?';
-
-    this.db.run(deleteSQL, [chatId], err => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log(`Row(s) deleted: ${this.changes}`);
-    });
+    this.db.run(QUERY.DELETE_BY_CHAT_ID, [chatId]);
   }
 
   deleteMessage(chatId, messageId) {
-    const deleteSQL = 'DELETE from messages WHERE chatId = ? AND messageId = ?';
-
-    this.db.run(deleteSQL, [chatId, messageId], err => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log(`Row(s) deleted: ${this.changes}`);
-    });
+    this.db.run(QUERY.DELETE_MESSAGE, [chatId, messageId]);
   }
 }
 

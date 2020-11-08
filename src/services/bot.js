@@ -19,7 +19,8 @@ class Bot {
     this.bot.help(async ctx => {
       const botMessage = await ctx.reply(
         '/clear - отчистить все сообщения\n' +
-          '/timeout N - удалить сообщения через N минут'
+          '/timeout N - удалить сообщения через N минут\n' +
+          '#timeoutN - оставляя хештег в сообщении - удалит сообщение через N минут'
       );
 
       saveMessageId(ctx);

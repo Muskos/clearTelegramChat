@@ -1,4 +1,5 @@
 const { database } = require('../services/database');
+const { Message } = require('../models/message');
 
 const clear = async (ctx, timeout) => {
   const chatId = ctx.message.chat.id;
@@ -29,13 +30,20 @@ const clearByTimeout = async bot => {
       item.chatId,
       item.value
     );
-    for (const message of messages) {
-      if (message) {
-        bot.telegram.deleteMessage(message.chatId, message.messageId);
-        database.deleteMessage(message.chatId, message.messageId);
-      }
-    }
+    deleteMessages(bot, messages);
   });
+
+  const messages = await database.getMessagesWithTimeOut();
+  deleteMessages(bot, messages);
+};
+
+const deleteMessages = (bot, messages) => {
+  for (const message of messages) {
+    if (message) {
+      bot.telegram.deleteMessage(message.chatId, message.messageId);
+      database.deleteMessage(message.chatId, message.messageId);
+    }
+  }
 };
 
 const clearCallback = async ctx => {
@@ -46,7 +54,7 @@ const clearCallback = async ctx => {
 
 const saveMessageId = async ctx => {
   try {
-    database.saveMessage(ctx.message);
+    database.saveMessage(new Message(ctx.message));
   } catch (error) {
     console.log(error);
   }
