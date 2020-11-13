@@ -9,6 +9,8 @@ const QUERY = {
   SELECT_BY_TIMEOUT:
     'SELECT chatId, messageId, createdAt FROM messages WHERE chatId = ?',
   SELECT_BY_CHAT_ID: 'SELECT messageId FROM messages WHERE chatId = ?',
+  SELECT_EXPIRED_MESSAGES:
+    'SELECT chatId, messageId, createdAt FROM messages WHERE createdAt < ?',
   INSERT_MESSAGE:
     'INSERT INTO messages(chatId, messageId, createdAt, deleteAt) VALUES(?,?,?,?)',
   CREATE_SETTINGS_DB:

@@ -52,6 +52,16 @@ class MessagesBase {
     return chatsId.map(item => item.chatId).filter(onlyUnique);
   }
 
+  async getExpairedMessages() {
+    const currentDate = new Date();
+    const timestampToDelete = currentDate.getTime() - 1000 * 60 * 60 * 47;
+    const messages = await this.db.all(QUERY.SELECT_EXPIRED_MESSAGES, [
+      timestampToDelete
+    ]);
+
+    return messages;
+  }
+
   deleteMessagesByChatId(chatId) {
     this.db.run(QUERY.DELETE_BY_CHAT_ID, [chatId]);
   }

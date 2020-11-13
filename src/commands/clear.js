@@ -36,6 +36,9 @@ const clearByTimeout = async bot => {
     deleteMessages(bot, messages);
   });
 
+  const expiredMessages = await database.getExpairedMessages();
+  deleteMessages(bot, expiredMessages);
+
   const messages = await database.getMessagesWithTimeOut();
   deleteMessages(bot, messages);
 };
