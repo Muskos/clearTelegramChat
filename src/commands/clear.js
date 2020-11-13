@@ -14,8 +14,11 @@ const clear = async (ctx, timeout) => {
 
     for (const item of messages) {
       if (item) {
-        ctx.telegram.deleteMessage(chatId, item.messageId);
-        database.deleteMessage(chatId, item.messageId);
+        ctx.telegram.deleteMessage(chatId, item.messageId).then(response => {
+          if (response === true) {
+            database.deleteMessage(chatId, item.messageId);
+          }
+        });
       }
     }
   } catch (error) {
@@ -40,8 +43,13 @@ const clearByTimeout = async bot => {
 const deleteMessages = (bot, messages) => {
   for (const message of messages) {
     if (message) {
-      bot.telegram.deleteMessage(message.chatId, message.messageId);
-      database.deleteMessage(message.chatId, message.messageId);
+      bot.telegram
+        .deleteMessage(message.chatId, message.messageId)
+        .then(response => {
+          if (response === true) {
+            database.deleteMessage(message.chatId, message.messageId);
+          }
+        });
     }
   }
 };
